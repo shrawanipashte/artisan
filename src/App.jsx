@@ -1,3 +1,4 @@
+import PricingAssistant from "./PricingAssistant";
 import { useState } from "react";
 import "./App.css";
 
@@ -34,6 +35,7 @@ function App() {
   const [products, setProducts] = useState([]);
 
   // ---------------- HOME ----------------
+
   if (page === "home") {
     return (
       <div className="page">
@@ -100,6 +102,7 @@ function App() {
   }
 
   // ---------------- ADD PRODUCT ----------------
+
   if (page === "add-product") {
     return (
       <div className="page">
@@ -123,6 +126,7 @@ function App() {
   }
 
   // ---------------- IMAGE STUDIO ----------------
+
   if (page === "image-studio") {
     function handleImage(event) {
       const file = event.target.files[0];
@@ -194,6 +198,7 @@ function App() {
   }
 
   // ---------------- HINDI DESCRIPTION ----------------
+
   if (page === "description") {
     return (
       <div className="page">
@@ -237,7 +242,8 @@ function App() {
     );
   }
 
-  // ---------------- AI REVIEW ----------------
+  // ---------------- AI REVIEW + PRICING ----------------
+
   if (page === "review") {
     return (
       <div className="page">
@@ -304,15 +310,27 @@ function App() {
           }
         />
 
+        {/* ---------------- PRICING ASSISTANT ---------------- */}
+
+        <PricingAssistant />
+
+        {/* ---------------- PUBLISH ---------------- */}
+
         <button
           onClick={() => {
             const newProduct = {
               id: Date.now(),
+
               name: productName,
+
               description: listingDescription,
+
               category: category,
+
               materials: materials,
+
               productionTime: productionTime,
+
               image: image,
             };
 
