@@ -1,25 +1,23 @@
-import PricingAssistant from "./PricingAssistant";
 import { useState } from "react";
+import PricingAssistant from "./PricingAssistant";
 import "./App.css";
 
 function App() {
   const [page, setPage] = useState("home");
 
-  // Product image
   const [image, setImage] = useState(null);
   const [enhanced, setEnhanced] = useState(false);
 
-  // Hindi description
   const [description, setDescription] = useState("");
 
-  // Editable AI listing
   const [productName, setProductName] = useState(
     "Handmade Cotton Bag"
   );
 
-  const [listingDescription, setListingDescription] = useState(
-    "A beautiful handmade cotton bag crafted using natural dyes."
-  );
+  const [listingDescription, setListingDescription] =
+    useState(
+      "A beautiful handmade cotton bag crafted using natural dyes."
+    );
 
   const [category, setCategory] = useState("Bags");
 
@@ -31,10 +29,14 @@ function App() {
     "2 days"
   );
 
-  // Published products
+  // This is the price that will actually be saved.
+  const [sellingPrice, setSellingPrice] = useState(null);
+
   const [products, setProducts] = useState([]);
 
-  // ---------------- HOME ----------------
+  // =========================
+  // HOME
+  // =========================
 
   if (page === "home") {
     return (
@@ -47,7 +49,12 @@ function App() {
           Ready to showcase your beautiful craft?
         </p>
 
-        <button onClick={() => setPage("add-product")}>
+        <button
+          onClick={() => {
+            setSellingPrice(null);
+            setPage("add-product");
+          }}
+        >
           + Add New Product
         </button>
 
@@ -88,6 +95,14 @@ function App() {
                 </p>
 
                 <p>
+                  <strong>Selling Price:</strong>{" "}
+                  ₹
+                  {Number(
+                    product.sellingPrice
+                  ).toLocaleString("en-IN")}
+                </p>
+
+                <p>
                   <strong>Status:</strong>{" "}
                   <span className="published">
                     Published ✓
@@ -101,12 +116,16 @@ function App() {
     );
   }
 
-  // ---------------- ADD PRODUCT ----------------
+  // =========================
+  // ADD PRODUCT
+  // =========================
 
   if (page === "add-product") {
     return (
       <div className="page">
-        <button onClick={() => setPage("home")}>
+        <button
+          onClick={() => setPage("home")}
+        >
           ← Back
         </button>
 
@@ -117,7 +136,9 @@ function App() {
         </p>
 
         <button
-          onClick={() => setPage("image-studio")}
+          onClick={() =>
+            setPage("image-studio")
+          }
         >
           📸 Add Product Photo
         </button>
@@ -125,7 +146,9 @@ function App() {
     );
   }
 
-  // ---------------- IMAGE STUDIO ----------------
+  // =========================
+  // IMAGE STUDIO
+  // =========================
 
   if (page === "image-studio") {
     function handleImage(event) {
@@ -140,7 +163,9 @@ function App() {
     return (
       <div className="page">
         <button
-          onClick={() => setPage("add-product")}
+          onClick={() =>
+            setPage("add-product")
+          }
         >
           ← Back
         </button>
@@ -169,7 +194,9 @@ function App() {
             />
 
             <button
-              onClick={() => setEnhanced(true)}
+              onClick={() =>
+                setEnhanced(true)
+              }
             >
               ✨ Enhance Photo
             </button>
@@ -197,13 +224,17 @@ function App() {
     );
   }
 
-  // ---------------- HINDI DESCRIPTION ----------------
+  // =========================
+  // HINDI DESCRIPTION
+  // =========================
 
   if (page === "description") {
     return (
       <div className="page">
         <button
-          onClick={() => setPage("image-studio")}
+          onClick={() =>
+            setPage("image-studio")
+          }
         >
           ← Back
         </button>
@@ -216,7 +247,7 @@ function App() {
 
         <textarea
           rows="7"
-          placeholder="यहाँ अपने उत्पाद के बारे में बताएं..."
+          placeholder="अपने उत्पाद के बारे में बताएं। जैसे: उत्पाद क्या है, किस सामग्री से बना है, इसे बनाने में कितना समय लगा, सामग्री पर लगभग कितना खर्च आया, और इसकी खास पारंपरिक/कलात्मक जानकारी बताएं।"
           value={description}
           onChange={(event) =>
             setDescription(event.target.value)
@@ -234,7 +265,9 @@ function App() {
         </button>
 
         <button
-          onClick={() => setPage("review")}
+          onClick={() =>
+            setPage("review")
+          }
         >
           ✨ Generate Listing
         </button>
@@ -242,13 +275,17 @@ function App() {
     );
   }
 
-  // ---------------- AI REVIEW + PRICING ----------------
+  // =========================
+  // REVIEW + PRICING
+  // =========================
 
   if (page === "review") {
     return (
       <div className="page">
         <button
-          onClick={() => setPage("description")}
+          onClick={() =>
+            setPage("description")
+          }
         >
           ← Back
         </button>
@@ -310,32 +347,42 @@ function App() {
           }
         />
 
-        {/* ---------------- PRICING ASSISTANT ---------------- */}
+        {/* SMART PRICING */}
 
-        <PricingAssistant />
+        <PricingAssistant
+          category={category}
+          materials={materials}
+          productionTime={productionTime}
+          onPriceChange={setSellingPrice}
+        />
 
-        {/* ---------------- PUBLISH ---------------- */}
+        {/* PUBLISH */}
 
         <button
           onClick={() => {
+            if (
+              sellingPrice === null ||
+              Number(sellingPrice) <= 0
+            ) {
+              alert(
+                "Please enter a selling price."
+              );
+              return;
+            }
+
             const newProduct = {
               id: Date.now(),
-
               name: productName,
-
               description: listingDescription,
-
               category: category,
-
               materials: materials,
-
               productionTime: productionTime,
-
+              sellingPrice: Number(sellingPrice),
               image: image,
             };
 
-            setProducts([
-              ...products,
+            setProducts((currentProducts) => [
+              ...currentProducts,
               newProduct,
             ]);
 
